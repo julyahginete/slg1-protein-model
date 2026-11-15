@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLG1/CTU2 In Silico Structural Model | Research Portfolio</title>
+  <!-- jQuery and 3Dmol.js CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.3/3dmol-min.js"></script>
+  <style>
+    :root {
+      --primary: #2b4c3f;
+      --primary-hover: #1f372d;
+      --bg-color: #f4f7f5;
+      --card-bg: #ffffff;
+      --text-main: #2c3531;
+      --text-muted: #5c7065;
+      --border: #d0d8d4;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 25px;
+      line-height: 1.6;
+    }
+    header {
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 12px;
+      margin-bottom: 25px;
+    }
+    h1 { color: var(--primary); margin-bottom: 5px; font-size: 1.8em; }
+    .subtitle { color: var(--text-muted); font-size: 1em; font-weight: 500; }
+    
+    .card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 22px;
+    }
+    h2 { color: var(--primary); margin-top: 0; font-size: 1.3em; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    
+    #viewer-container {
+      height: 480px;
+      width: 100%;
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background-color: #fafafa;
+      margin-bottom: 15px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9em;
+      transition: background 0.2s;
+    }
+    button:hover { background-color: var(--primary-hover); }
+    .status-text { margin-left: auto; font-size: 0.85em; color: var(--text-muted); font-style: italic; }
+
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.95em;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th { background-color: #eaf1ed; color: var(--primary); }
+    tr:nth-child(even) { background-color: #fafbfc; }
+
+  
+    .sequence-box {
+      background: #1e2220;
+      color: #d8e2dc;
+      padding: 15px;
+      border-radius: 6px;
+      max-height: 160px;
+      overflow-y: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85em;
+      margin-top: 30px;
+      border-top: 1px solid var(--border);
+      padding-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>In Silico Structural Characterization of SLG1/CTU2</h1>
+    <div class="subtitle"><em>Oryza sativa</em> subsp. <em>japonica</em> | Computational Structural Modeling &amp; Analysis</div>
+  </header>
+
+ 
+  <div class="card">
+    <h2>Research Overview</h2>
+    <p>This computational study evaluates structural variations within the <em>SLG1/CTU2</em> gene of rice (<em>Oryza sativa</em> subsp. <em>japonica</em>). Utilizing digital computational science workflow modeling, this platform demonstrates the structural stability enhancements of mutant configurations compared to standard baseline baselines.</p>
+  </div>
+
+ 
+  <div class="card">
+    <h2>Interactive 3D Structural Model</h2>
+    <p>Inspect and rotate protein conformations in real-time. Use the controls below to switch models or toggle automated rotation.</p>
+    
+    <div id="viewer-container"></div>
+
+    <div class="controls">
+      <button onclick="loadModel('standard_slg1.pdb', 'Standard Wild-Type Model Loaded')">Load Standard Model</button>
+      <button onclick="loadModel('mutant_slg1.pdb', 'Mutant Enhanced Model Loaded')">Load Mutant Model</button>
+      <button onclick="toggleSpin()">Toggle Spin</button>
+      <button onclick="setStyle('cartoon')">Cartoon View</button>
+      <button onclick="setStyle('stick')">Stick View</button>
+      <span id="load-status" class="status-text">Status: Ready</span>
+    </div>
+  </div>
+
+ 
+  <div class="card">
+    <h2>Structural &amp; Computational Metrics</h2>
+    <p>Comparative structural parameters derived from computational modeling simulations:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Structural Parameter</th>
+          <th>Standard Baseline</th>
+          <th>Mutant Configuration</th>
+          <th>In Silico Observation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Conformational Stability</strong></td>
+          <td>Baseline RMSD</td>
+          <td>Optimized Density</td>
+          <td>Higher structural resilience in mutant</td>
+        </tr>
+        <tr>
+          <td><strong>Target Domain Interaction</strong></td>
+          <td>Standard Topology</td>
+          <td>Compact Configuration</td>
+          <td>Enhanced resistance to thermal stress factors</td>
+        </tr>
+        <tr>
+          <td><strong>Modeling Modality</strong></td>
+          <td>Digital In Silico</td>
+          <td>Digital In Silico</td>
+          <td>Pure computational structural characterization</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="card">
+    <h2>Gene / Protein Sequence (FASTA)</h2>
+    <div class="sequence-box">
+      <pre><code>&gt;LOC_Os12g39840 | SLG1/CTU2 (Oryza sativa subsp. japonica)
+ATGGAGCCGTCGTCGTCGTCGTCGGCGGCGGCGGCGGCGGCGAGGAAGAAGAGGAGGAAG
+AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
+(Insert full nucleotide or amino acid sequence string here)</code></pre>
+    </div>
+  </div>
+
+ 
+  <div class="card">
+    <h2>Reference Literature</h2>
+    <p>Xu, Y., Zhang, L., Ou, S., Wang, R., Wang, Y., Chu, C., &amp; Yao, S. (2020). Natural variations of <em>SLG1</em> confer high-temperature tolerance in <em>indica</em> rice. <em>Nature Communications</em>, 11, 5493. <a href="https://doi.org/10.1038/s41467-020-19320-9" target="_blank">https://doi.org/10.1038/s41467-020-19320-9</a></p>
+  </div>
+
+  <footer>
+    <p>SLG1/CTU2 Computational Structural Modeling Project &bull; Hosted via GitHub Pages</p>
+  </footer>
+
+  
+  <script>
+    let viewer = null;
+    let isSpinning = false;
+    let currentStyle = {cartoon: {color: 'spectrum'}};
+
+    $(function() {
+      let element = $('#viewer-container');
+      viewer = $3Dmol.createViewer(element, { backgroundColor: '#fafafa' });
+      // Load standard model by default on start
+      loadModel('standard_slg1.pdb', 'Standard Model Loaded Successfully');
+    });
+
+    function loadModel(filename, statusMessage) {
+      $('#load-status').text('Status: Loading ' + filename + '...');
+      viewer.clear();
+      
+      $.ajax(filename, {
+        success: function(data) {
+          viewer.addModel(data, "pdb");
+          viewer.setStyle({}, currentStyle);
+          viewer.zoomTo();
+          viewer.render();
+          $('#load-status').text('Status: ' + statusMessage);
+        },
+        error: function() {
+          // Fallback demo render if local PDB file isn't found immediately during testing
+          $('#load-status').text('Status: File not found locally. Upload ' + filename + ' to your folder!');
+        }
+      });
+    }
+
+    function toggleSpin() {
+      isSpinning = !isSpinning;
+      viewer.spin(isSpinning);
+    }
+
+    function setStyle(styleType) {
+      viewer.setStyle({}, {});
+      if (styleType === 'cartoon') {
+        currentStyle = {cartoon: {color: 'spectrum'}};
+      } else if (styleType === 'stick') {
+        currentStyle = {stick: {colorscheme: 'amino'}};
+      }
+      viewer.setStyle({}, currentStyle);
+      viewer.render();
+    }
+  </script>
+
+</body>
+</html>
