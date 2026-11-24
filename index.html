@@ -3,223 +3,250 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SLG1/CTU2 In Silico Structural Model | Research Portfolio</title>
+  <title>SLG1/CTU2 Structural Model | Grade 10 Research</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.3/3dmol-min.js"></script>
   <style>
     :root {
-      --primary: #2b4c3f;
-      --primary-hover: #1f372d;
-      --accent: #3d6b59;
-      --bg-color: #f4f7f5;
-      --card-bg: #ffffff;
-      --text-main: #2c3531;
-      --text-muted: #5c7065;
-      --border: #d0d8d4;
+      --bg: #ffffff;
+      --surface: #f7f7f7;
+      --border: #111111;
+      --border-light: #cccccc;
+      --text: #111111;
+      --muted: #555555;
     }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      max-width: 950px;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      max-width: 900px;
       margin: 0 auto;
-      padding: 25px;
-      line-height: 1.6;
+      padding: 24px 18px;
+      line-height: 1.5;
     }
+
     header {
-      border-bottom: 3px solid var(--primary);
+      border-bottom: 2px solid var(--border);
       padding-bottom: 12px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
-    h1 { color: var(--primary); margin-bottom: 5px; font-size: 1.8em; }
-    .subtitle { color: var(--text-muted); font-size: 1em; font-weight: 500; }
-    
-    .card {
-      background: var(--card-bg);
-      padding: 24px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 22px;
+
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 1.5rem;
+      font-weight: 700;
     }
-    h2 { color: var(--primary); margin-top: 0; font-size: 1.3em; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    section {
+      border: 1px solid var(--border-light);
+      padding: 18px;
+      margin-bottom: 18px;
+      background-color: var(--bg);
+    }
+
+    h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 6px;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+    }
+
     #viewer-container {
-      height: 480px;
+      height: 430px;
       width: 100%;
       position: relative;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background-color: #fafafa;
-      margin-bottom: 15px;
-      overflow: hidden;
+      background-color: var(--surface);
+      margin-bottom: 12px;
     }
+
     .controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
     }
+
     button, .file-upload-btn {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 9px 16px;
-      border-radius: 6px;
+      background-color: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      font-size: 0.88rem;
       cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9em;
-      transition: background 0.2s;
       display: inline-block;
     }
-    button:hover, .file-upload-btn:hover { background-color: var(--primary-hover); }
-    .file-upload-btn {
-      background-color: var(--accent);
-      border: 1px dashed #ffffff80;
+
+    button:hover, .file-upload-btn:hover {
+      background-color: var(--text);
+      color: var(--bg);
     }
+
     input[type="file"] {
       display: none;
     }
-    .status-text { margin-left: auto; font-size: 0.85em; color: var(--text-muted); font-style: italic; }
+
+    .status-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.95em;
+      font-size: 0.9rem;
+      margin-top: 8px;
     }
+
     th, td {
-      border: 1px solid var(--border);
-      padding: 10px 14px;
+      border: 1px solid var(--border-light);
+      padding: 8px 10px;
       text-align: left;
+      vertical-align: top;
     }
-    th { background-color: #eaf1ed; color: var(--primary); }
-    tr:nth-child(even) { background-color: #fafbfc; }
+
+    th {
+      background-color: var(--surface);
+      font-weight: 700;
+    }
 
     .sequence-box {
-      background: #1e2220;
-      color: #d8e2dc;
-      padding: 15px;
-      border-radius: 6px;
-      max-height: 160px;
+      background-color: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border-light);
+      padding: 12px;
+      max-height: 150px;
       overflow-y: auto;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 13px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
       word-break: break-all;
     }
 
+    a {
+      color: var(--text);
+      text-decoration: underline;
+    }
+
     footer {
+      border-top: 1px solid var(--border-light);
+      padding-top: 12px;
+      margin-top: 24px;
+      font-size: 0.82rem;
+      color: var(--muted);
       text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85em;
-      margin-top: 30px;
-      border-top: 1px solid var(--border);
-      padding-top: 15px;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>In Silico Structural Characterization of SLG1/CTU2</h1>
-    <div class="subtitle"><em>Oryza sativa</em> subsp. <em>japonica</em> | Computational Structural Modeling &amp; Analysis</div>
+    <h1>SLG1/CTU2 Structural Model (In Silico)</h1>
+    <div class="subtitle"><em>Oryza sativa</em> subsp. <em>japonica</em> &bull; Grade 10 Research Project</div>
   </header>
 
-  <div class="card">
-    <h2>Research Overview</h2>
-    <p>This computational study evaluates structural variations within the <em>SLG1/CTU2</em> gene of rice (<em>Oryza sativa</em> subsp. <em>japonica</em>). Utilizing digital computational science workflow modeling, this platform demonstrates the structural stability enhancements of mutant configurations compared to standard baselines.</p>
-  </div>
+  <section>
+    <h2>About Our Study</h2>
+    <p>In our Grade 10 research, we used computer tools instead of wet-lab experiments to check the protein structure of SLG1/CTU2 in <em>Oryza sativa</em> subsp. <em>japonica</em>. We put this page together to view the 3D models and compare the mutant version against the standard baseline.</p>
+  </section>
 
-  <div class="card">
-    <h2>Interactive 3D Structural Model</h2>
-    <p>Inspect and rotate protein conformations in real-time. Upload a local <code>.pdb</code> or <code>.cif</code> file directly, or load pre-hosted models below.</p>
-    
+  <section>
+    <h2>3D Protein Viewer</h2>
+    <p>Upload a <code>.pdb</code> or <code>.cif</code> file from your device, or load the files in the project folder. Drag to rotate, scroll to zoom, and use the buttons to switch views.</p>
+
     <div id="viewer-container"></div>
 
     <div class="controls">
-      <!-- Local File Input Button -->
       <label for="pdb-upload" class="file-upload-btn">Insert PDB / CIF File</label>
       <input type="file" id="pdb-upload" accept=".pdb,.cif,.mmcif,.ent">
-
-      <!-- Hosted Model Buttons -->
-      <button onclick="loadModel('standard_slg1.pdb', 'Standard Wild-Type Model Loaded')">Load Standard Model</button>
-      <button onclick="loadModel('mutant_slg1.pdb', 'Mutant Enhanced Model Loaded')">Load Mutant Model</button>
-      
-      <!-- View Controls -->
-      <button onclick="toggleSpin()">Toggle Spin</button>
-      <button onclick="setStyle('cartoon')">Cartoon View</button>
-      <button onclick="setStyle('stick')">Stick View</button>
-      <span id="load-status" class="status-text">Status: Ready — Insert a file or load a model</span>
+      <button onclick="loadModel('standard_slg1.pdb', 'Standard model loaded')">Load Standard</button>
+      <button onclick="loadModel('mutant_slg1.pdb', 'Mutant model loaded')">Load Mutant</button>
+      <button onclick="toggleSpin()">Spin</button>
+      <button onclick="setStyle('cartoon')">Cartoon</button>
+      <button onclick="setStyle('stick')">Stick</button>
+      <span id="load-status" class="status-text">Status: Waiting for file or model</span>
     </div>
-  </div>
+  </section>
 
-  <div class="card">
-    <h2>Structural &amp; Computational Metrics</h2>
-    <p>Comparative structural parameters derived from computational modeling simulations:</p>
+  <section>
+    <h2>Comparison Table (Standard vs. Mutant)</h2>
+    <p>Summary of what we observed from our computational modeling so far:</p>
     <table>
       <thead>
         <tr>
-          <th>Structural Parameter</th>
-          <th>Standard Baseline</th>
-          <th>Mutant Configuration</th>
-          <th>In Silico Observation</th>
+          <th>Part Checked</th>
+          <th>Standard</th>
+          <th>Mutant</th>
+          <th>What We Noticed</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Conformational Stability</strong></td>
-          <td>Baseline RMSD</td>
-          <td>Optimized Density</td>
-          <td>Higher structural resilience in mutant</td>
+          <td>Overall Shape / Stability</td>
+          <td>Standard structure</td>
+          <td>Adjusted structure</td>
+          <td>Mutant looks more stable in the model</td>
         </tr>
         <tr>
-          <td><strong>Target Domain Interaction</strong></td>
-          <td>Standard Topology</td>
-          <td>Compact Configuration</td>
-          <td>Enhanced resistance to thermal stress factors</td>
+          <td>Domain / Region</td>
+          <td>Baseline layout</td>
+          <td>More compact layout</td>
+          <td>Looks better suited against heat stress</td>
         </tr>
         <tr>
-          <td><strong>Modeling Modality</strong></td>
-          <td>Digital In Silico</td>
-          <td>Digital In Silico</td>
-          <td>Pure computational structural characterization</td>
+          <td>Method Used</td>
+          <td>In silico only</td>
+          <td>In silico only</td>
+          <td>Done through modeling software and files</td>
         </tr>
       </tbody>
     </table>
-  </div>
+  </section>
 
-  <div class="card">
-    <h2>Gene / Protein Sequence (FASTA)</h2>
-    <div class="sequence-box">
-      <pre><code>&gt;LOC_Os12g39840 | SLG1/CTU2 (Oryza sativa subsp. japonica)
+  <section>
+    <h2>Sequence (FASTA)</h2>
+    <div class="sequence-box">&gt;LOC_Os12g39840 | SLG1/CTU2 (Oryza sativa subsp. japonica)
 ATGGAGCCGTCGTCGTCGTCGTCGGCGGCGGCGGCGGCGGCGAGGAAGAAGAGGAGGAAG
 AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
-(Insert full nucleotide or amino acid sequence string here)</code></pre>
-    </div>
-  </div>
+(Paste full sequence here)</div>
+  </section>
 
-  <div class="card">
-    <h2>Reference Literature</h2>
+  <section>
+    <h2>Reference</h2>
     <p>Xu, Y., Zhang, L., Ou, S., Wang, R., Wang, Y., Chu, C., &amp; Yao, S. (2020). Natural variations of <em>SLG1</em> confer high-temperature tolerance in <em>indica</em> rice. <em>Nature Communications</em>, 11, 5493. <a href="https://doi.org/10.1038/s41467-020-19320-9" target="_blank">https://doi.org/10.1038/s41467-020-19320-9</a></p>
-  </div>
+  </section>
 
   <footer>
-    <p>SLG1/CTU2 Computational Structural Modeling Project &bull; Hosted via GitHub Pages</p>
+    Grade 10 Research &bull; SLG1/CTU2 In Silico Model Viewer
   </footer>
 
   <script>
     let viewer = null;
     let isSpinning = false;
-    let currentStyle = {cartoon: {color: 'spectrum'}};
+    let currentStyle = { cartoon: { color: 'white' } };
 
-    $(function() {
-      let element = $('#viewer-container');
-      viewer = $3Dmol.createViewer(element, { backgroundColor: '#fafafa' });
-      
-      // Try loading default model if hosted on GitHub Pages; otherwise wait for file upload
-      loadModel('standard_slg1.pdb', 'Standard Model Loaded Successfully', true);
+    $(function () {
+      const element = $('#viewer-container');
+      viewer = $3Dmol.createViewer(element, { backgroundColor: '#f7f7f7' });
 
-      // Handle manual file insertion via FileReader
-      $('#pdb-upload').on('change', function(event) {
+      loadModel('standard_slg1.pdb', 'Standard model loaded', true);
+
+      $('#pdb-upload').on('change', function (event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -230,12 +257,11 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
         $('#load-status').text('Status: Reading ' + fileName + '...');
 
         const reader = new FileReader();
-        reader.onload = function(e) {
-          const fileContent = e.target.result;
-          renderStructure(fileContent, format, 'Loaded ' + fileName);
+        reader.onload = function (e) {
+          renderStructure(e.target.result, format, 'Loaded ' + fileName);
         };
-        reader.onerror = function() {
-          $('#load-status').text('Status: Error reading file.');
+        reader.onerror = function () {
+          $('#load-status').text('Status: Could not read file.');
         };
         reader.readAsText(file);
       });
@@ -252,18 +278,18 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
 
     function loadModel(filename, statusMessage, isInitialLoad = false) {
       $('#load-status').text('Status: Loading ' + filename + '...');
-      
+
       $.ajax(filename, {
         dataType: 'text',
-        success: function(data) {
+        success: function (data) {
           const format = filename.toLowerCase().endsWith('.cif') ? 'cif' : 'pdb';
           renderStructure(data, format, statusMessage);
         },
-        error: function() {
+        error: function () {
           if (isInitialLoad) {
-            $('#load-status').text('Status: Ready — Click "Insert PDB / CIF File" to view a local model');
+            $('#load-status').text('Status: Ready — click "Insert PDB / CIF File"');
           } else {
-            $('#load-status').text('Status: ' + filename + ' not found on server. Use "Insert PDB / CIF File" instead!');
+            $('#load-status').text('Status: ' + filename + ' not found. Use "Insert PDB / CIF File".');
           }
         }
       });
@@ -277,9 +303,9 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
     function setStyle(styleType) {
       viewer.setStyle({}, {});
       if (styleType === 'cartoon') {
-        currentStyle = {cartoon: {color: 'spectrum'}};
+        currentStyle = { cartoon: { color: 'white' } };
       } else if (styleType === 'stick') {
-        currentStyle = {stick: {colorscheme: 'amino'}};
+        currentStyle = { stick: { color: 'black' } };
       }
       viewer.setStyle({}, currentStyle);
       viewer.render();
