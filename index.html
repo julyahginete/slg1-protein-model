@@ -10,6 +10,7 @@
     :root {
       --primary: #2b4c3f;
       --primary-hover: #1f372d;
+      --accent: #3d6b59;
       --bg-color: #f4f7f5;
       --card-bg: #ffffff;
       --text-main: #2c3531;
@@ -50,6 +51,7 @@
       border-radius: 8px;
       background-color: #fafafa;
       margin-bottom: 15px;
+      overflow: hidden;
     }
     .controls {
       display: flex;
@@ -57,7 +59,7 @@
       gap: 10px;
       align-items: center;
     }
-    button {
+    button, .file-upload-btn {
       background-color: var(--primary);
       color: white;
       border: none;
@@ -67,11 +69,18 @@
       font-weight: 600;
       font-size: 0.9em;
       transition: background 0.2s;
+      display: inline-block;
     }
-    button:hover { background-color: var(--primary-hover); }
+    button:hover, .file-upload-btn:hover { background-color: var(--primary-hover); }
+    .file-upload-btn {
+      background-color: var(--accent);
+      border: 1px dashed #ffffff80;
+    }
+    input[type="file"] {
+      display: none;
+    }
     .status-text { margin-left: auto; font-size: 0.85em; color: var(--text-muted); font-style: italic; }
 
-    
     table {
       width: 100%;
       border-collapse: collapse;
@@ -86,7 +95,6 @@
     th { background-color: #eaf1ed; color: var(--primary); }
     tr:nth-child(even) { background-color: #fafbfc; }
 
-  
     .sequence-box {
       background: #1e2220;
       color: #d8e2dc;
@@ -116,30 +124,29 @@
     <div class="subtitle"><em>Oryza sativa</em> subsp. <em>japonica</em> | Computational Structural Modeling &amp; Analysis</div>
   </header>
 
- 
   <div class="card">
     <h2>Research Overview</h2>
-    <p>This computational study evaluates structural variations within the <em>SLG1/CTU2</em> gene of rice (<em>Oryza sativa</em> subsp. <em>japonica</em>). Utilizing digital computational science workflow modeling, this platform demonstrates the structural stability enhancements of mutant configurations compared to standard baseline baselines.</p>
+    <p>This computational study evaluates structural variations within the <em>SLG1/CTU2</em> gene of rice (<em>Oryza sativa</em> subsp. <em>japonica</em>). Utilizing digital computational science workflow modeling, this platform demonstrates the structural stability enhancements of mutant configurations compared to standard baselines.</p>
   </div>
 
- 
   <div class="card">
     <h2>Interactive 3D Structural Model</h2>
-    <p>Inspect and rotate protein conformations in real-time. Use the controls below to switch models or toggle automated rotation.</p>
+    <p>Inspect and rotate protein conformations in real-time. Upload a local <code>.pdb</code> or <code>.cif</code> file directly, or load pre-hosted models below.</p>
     
     <div id="viewer-container"></div>
 
     <div class="controls">
+      <label for="pdb-upload" class="file-upload-btn">Insert PDB / CIF File</label>
+      <input type="file" id="pdb-upload" accept=".pdb,.cif,.mmcif,.ent">
       <button onclick="loadModel('standard_slg1.pdb', 'Standard Wild-Type Model Loaded')">Load Standard Model</button>
       <button onclick="loadModel('mutant_slg1.pdb', 'Mutant Enhanced Model Loaded')">Load Mutant Model</button>
       <button onclick="toggleSpin()">Toggle Spin</button>
       <button onclick="setStyle('cartoon')">Cartoon View</button>
       <button onclick="setStyle('stick')">Stick View</button>
-      <span id="load-status" class="status-text">Status: Ready</span>
+      <span id="load-status" class="status-text">Status: Ready — Insert a file or load a model</span>
     </div>
   </div>
 
- 
   <div class="card">
     <h2>Structural &amp; Computational Metrics</h2>
     <p>Comparative structural parameters derived from computational modeling simulations:</p>
@@ -175,7 +182,6 @@
     </table>
   </div>
 
-  
   <div class="card">
     <h2>Gene / Protein Sequence (FASTA)</h2>
     <div class="sequence-box">
@@ -186,7 +192,6 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
     </div>
   </div>
 
- 
   <div class="card">
     <h2>Reference Literature</h2>
     <p>Xu, Y., Zhang, L., Ou, S., Wang, R., Wang, Y., Chu, C., &amp; Yao, S. (2020). Natural variations of <em>SLG1</em> confer high-temperature tolerance in <em>indica</em> rice. <em>Nature Communications</em>, 11, 5493. <a href="https://doi.org/10.1038/s41467-020-19320-9" target="_blank">https://doi.org/10.1038/s41467-020-19320-9</a></p>
@@ -196,7 +201,6 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
     <p>SLG1/CTU2 Computational Structural Modeling Project &bull; Hosted via GitHub Pages</p>
   </footer>
 
-  
   <script>
     let viewer = null;
     let isSpinning = false;
@@ -205,25 +209,55 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
     $(function() {
       let element = $('#viewer-container');
       viewer = $3Dmol.createViewer(element, { backgroundColor: '#fafafa' });
-      // Load standard model by default on start
-      loadModel('standard_slg1.pdb', 'Standard Model Loaded Successfully');
+      
+      loadModel('standard_slg1.pdb', 'Standard Model Loaded Successfully', true);
+
+      $('#pdb-upload').on('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const fileName = file.name;
+        const extension = fileName.split('.').pop().toLowerCase();
+        const format = (extension === 'cif' || extension === 'mmcif') ? 'cif' : 'pdb';
+
+        $('#load-status').text('Status: Reading ' + fileName + '...');
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const fileContent = e.target.result;
+          renderStructure(fileContent, format, 'Loaded ' + fileName);
+        };
+        reader.onerror = function() {
+          $('#load-status').text('Status: Error reading file.');
+        };
+        reader.readAsText(file);
+      });
     });
 
-    function loadModel(filename, statusMessage) {
-      $('#load-status').text('Status: Loading ' + filename + '...');
+    function renderStructure(data, format, successMsg) {
       viewer.clear();
+      viewer.addModel(data, format);
+      viewer.setStyle({}, currentStyle);
+      viewer.zoomTo();
+      viewer.render();
+      $('#load-status').text('Status: ' + successMsg);
+    }
+
+    function loadModel(filename, statusMessage, isInitialLoad = false) {
+      $('#load-status').text('Status: Loading ' + filename + '...');
       
       $.ajax(filename, {
+        dataType: 'text',
         success: function(data) {
-          viewer.addModel(data, "pdb");
-          viewer.setStyle({}, currentStyle);
-          viewer.zoomTo();
-          viewer.render();
-          $('#load-status').text('Status: ' + statusMessage);
+          const format = filename.toLowerCase().endsWith('.cif') ? 'cif' : 'pdb';
+          renderStructure(data, format, statusMessage);
         },
         error: function() {
-          // Fallback demo render if local PDB file isn't found immediately during testing
-          $('#load-status').text('Status: File not found locally. Upload ' + filename + ' to your folder!');
+          if (isInitialLoad) {
+            $('#load-status').text('Status: Ready — Click "Insert PDB / CIF File" to view a local model');
+          } else {
+            $('#load-status').text('Status: ' + filename + ' not found on server. Use "Insert PDB / CIF File" instead!');
+          }
         }
       });
     }
