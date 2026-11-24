@@ -136,10 +136,15 @@
     <div id="viewer-container"></div>
 
     <div class="controls">
+      <!-- Local File Input Button -->
       <label for="pdb-upload" class="file-upload-btn">Insert PDB / CIF File</label>
       <input type="file" id="pdb-upload" accept=".pdb,.cif,.mmcif,.ent">
+
+      <!-- Hosted Model Buttons -->
       <button onclick="loadModel('standard_slg1.pdb', 'Standard Wild-Type Model Loaded')">Load Standard Model</button>
       <button onclick="loadModel('mutant_slg1.pdb', 'Mutant Enhanced Model Loaded')">Load Mutant Model</button>
+      
+      <!-- View Controls -->
       <button onclick="toggleSpin()">Toggle Spin</button>
       <button onclick="setStyle('cartoon')">Cartoon View</button>
       <button onclick="setStyle('stick')">Stick View</button>
@@ -210,8 +215,10 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
       let element = $('#viewer-container');
       viewer = $3Dmol.createViewer(element, { backgroundColor: '#fafafa' });
       
+      // Try loading default model if hosted on GitHub Pages; otherwise wait for file upload
       loadModel('standard_slg1.pdb', 'Standard Model Loaded Successfully', true);
 
+      // Handle manual file insertion via FileReader
       $('#pdb-upload').on('change', function(event) {
         const file = event.target.files[0];
         if (!file) return;
