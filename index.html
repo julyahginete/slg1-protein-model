@@ -79,6 +79,7 @@
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
+      margin-bottom: 10px;
     }
 
     button, .file-upload-btn {
@@ -125,17 +126,24 @@
       font-weight: 700;
     }
 
-    .sequence-box {
+    textarea.sequence-box {
+      width: 100%;
       background-color: var(--surface);
       color: var(--text);
       border: 1px solid var(--border-light);
       padding: 12px;
-      max-height: 150px;
+      min-height: 150px;
+      max-height: 240px;
       overflow-y: auto;
       font-family: "Courier New", Courier, monospace;
       font-size: 0.82rem;
-      white-space: pre-wrap;
-      word-break: break-all;
+      resize: vertical;
+      margin-bottom: 8px;
+    }
+
+    .fasta-info {
+      font-size: 0.82rem;
+      color: var(--muted);
     }
 
     a {
@@ -220,10 +228,20 @@
 
   <section>
     <h2>Sequence (FASTA)</h2>
-    <div class="sequence-box">&gt;LOC_Os12g39840 | SLG1/CTU2 (Oryza sativa subsp. japonica)
+    <p>Paste or edit your FASTA sequence below, or upload a <code>.fasta</code> / <code>.fa</code> / <code>.txt</code> file.</p>
+
+    <div class="controls">
+      <label for="fasta-upload" class="file-upload-btn">Insert FASTA File</label>
+      <input type="file" id="fasta-upload" accept=".fasta,.fa,.fna,.faa,.txt">
+      <button type="button" onclick="updateFastaStats()">Check Length</button>
+      <button type="button" onclick="clearFasta()">Clear</button>
+    </div>
+
+    <textarea id="fasta-input" class="sequence-box" spellcheck="false">&gt;LOC_Os12g39840 | SLG1/CTU2 (Oryza sativa subsp. japonica)
 ATGGAGCCGTCGTCGTCGTCGTCGGCGGCGGCGGCGGCGGCGAGGAAGAAGAGGAGGAAG
-AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
-(Paste full sequence here)</div>
+AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG</textarea>
+
+    <div id="fasta-stats" class="fasta-info">Header: &gt;LOC_Os12g39840 | SLG1/CTU2 (Oryza sativa subsp. japonica) | Length: 114 characters</div>
   </section>
 
   <section>
@@ -265,7 +283,54 @@ AAGAGGAAGCTGGACGAGCCGGCGAGCTCGTCGTCGGTGGTGGAGGTGGCGGTGGTG...
         };
         reader.readAsText(file);
       });
+
+      $('#fasta-upload').on('change', function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          $('#fasta-input').val(e.target.result);
+          updateFastaStats();
+        };
+        reader.onerror = function () {
+          $('#fasta-stats').text('Could not read FASTA file.');
+        };
+        reader.readAsText(file);
+      });
+
+      $('#fasta-input').on('input', function () {
+        updateFastaStats();
+      });
+
+      updateFastaStats();
     });
+
+    function updateFastaStats() {
+      const rawText = $('#fasta-input').val() || '';
+      const lines = rawText.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+
+      if (lines.length === 0) {
+        $('#fasta-stats').text('No sequence entered yet.');
+        return;
+      }
+
+      let header = 'No header line (starts with >)';
+      let seqLines = lines;
+
+      if (lines[0].startsWith('>')) {
+        header = lines[0];
+        seqLines = lines.slice(1);
+      }
+
+      const cleanSeq = seqLines.join('').replace(/\s+/g, '');
+      $('#fasta-stats').text('Header: ' + header + ' | Length: ' + cleanSeq.length + ' characters');
+    }
+
+    function clearFasta() {
+      $('#fasta-input').val('');
+      updateFastaStats();
+    }
 
     function renderStructure(data, format, successMsg) {
       viewer.clear();
